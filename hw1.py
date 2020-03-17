@@ -3,19 +3,26 @@ import pandas as pd
 import sys
 import csv
 
-def load_data(path, avg, std):
-    raw_test_data = pd.read_csv(path, header=None, encoding='big5')
+def load_data(path):
+    name = ['AMB_TEMP', 'CH4', 'CO', 'NMHC', 'NO', 'NO2', 'NOx', 'O3', 'PM10', 'PM2.5', 'RAINFALL', 'RH', 'SO2', 'THC', 'WD_HR', 'WIND_DIREC', 'WIND_SPEED', 'WS_HR']
+    chosen = ['CH4', 'CO', 'NO', 'NO2', 'O3', 'PM2.5', 'RAINFALL', 'RH', 'SO2', 'WIND_SPEED', 'WS_HR', 'PM10']
+    raw_test_data = pd.read_csv('data/test.csv', header=None, encoding='big5')
     raw_test_data = raw_test_data.replace(({'NR': 0})).to_numpy()[:, 2:].astype('float64')
-
+        
     test_X = []
     for i in range(0, raw_test_data.shape[0], 18):
         test_X.append(raw_test_data[i:i + 18, :])
-    test_X = np.array(test_X)
-    test_X = test_X.reshape(test_X.shape[0], -1)
-    test_X = (test_X - avg) / std
-    test_X = np.concatenate((np.ones((test_X.shape[0], 1)), test_X), axis=1)
+    test_X = np.hstack(test_X)
+    df = pd.DataFrame(test_X.transpose(), columns=name)
+    my = df[chosen].to_numpy().transpose()
 
-    return test_X
+    Xtest = []
+    for i in range(0, my.shape[1], 9):
+        Xtest.append(my[:, i:i + 9].flatten())
+    Xtest = np.array(Xtest)
+    Xtest = np.concatenate([np.ones([Xtest.shape[0], 1]), Xtest], axis=1)
+    return Xtest
+
 def to_csv(y, path):
     with open(path, mode='w', newline='') as submit_file:
         csv_writer = csv.writer(submit_file)
@@ -27,7 +34,6 @@ def to_csv(y, path):
 
 if __name__ == '__main__':
     infile, outfile = sys.argv[1], sys.argv[2]
-    avg, std = np.load('hw1_regression/avg.npy'), np.load('hw1_regression/std.npy')
-    X = load_data(infile, avg, std)
-    W = np.load('hw1_regression/W.npy')
+    X = load_data(infile)
+    W = np.load('hw1/W.npy')
     to_csv(np.maximum(0, np.dot(X, W)), outfile)

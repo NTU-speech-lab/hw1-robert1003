@@ -5,7 +5,7 @@ import csv
 
 def load_data(path):
     name = ['AMB_TEMP', 'CH4', 'CO', 'NMHC', 'NO', 'NO2', 'NOx', 'O3', 'PM10', 'PM2.5', 'RAINFALL', 'RH', 'SO2', 'THC', 'WD_HR', 'WIND_DIREC', 'WIND_SPEED', 'WS_HR']
-    chosen = ['CH4', 'CO', 'NO', 'NO2', 'NOx', 'O3', 'PM10', 'PM2.5', 'RAINFALL', 'RH', 'SO2', 'WIND_SPEED', 'WS_HR']
+    chosen = ['CH4', 'CO', 'NO', 'NO2', 'O3', 'PM2.5', 'RAINFALL', 'RH', 'SO2', 'WIND_SPEED', 'WS_HR', 'PM10']
     raw_test_data = pd.read_csv('data/test.csv', header=None, encoding='big5')
     raw_test_data = raw_test_data.replace(({'NR': 0})).to_numpy()[:, 2:].astype('float64')
         
